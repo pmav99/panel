@@ -384,3 +384,17 @@ def clone_model(bokeh_model, include_defaults=False, include_undefined=False):
         include_defaults=include_defaults, include_undefined=include_undefined
     )
     return type(bokeh_model)(**properties)
+
+
+_period_regex = re.compile(r'((?P<weeks>\d+?)w)?((?P<days>\d+?)d)?((?P<hours>\d+?)h)?((?P<minutes>\d+?)m)?((?P<seconds>\d+?)s)?')
+
+def parse_timedelta(time_str):
+    parts = _period_regex.match(time_str)
+    if not parts:
+        return
+    parts = parts.groupdict()
+    time_params = {}
+    for (name, p) in parts.items():
+        if p:
+            time_params[name] = int(p)
+    return dt.timedelta(**time_params)
